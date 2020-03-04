@@ -9,6 +9,9 @@ import (
 func Scrape(url string) string {
 	c := colly.NewCollector()
 
+	// Send a nice user agent
+	c.UserAgent = "CoronaCount/1.0.0 (+https://github.com/tsak/coronacount)"
+
 	// Store response body for counting
 	var body []byte
 	c.OnResponse(func(response *colly.Response) {
