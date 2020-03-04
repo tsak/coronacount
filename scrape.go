@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bytes"
 	"github.com/gocolly/colly"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 func Scrape(url string) {
@@ -12,18 +12,14 @@ func Scrape(url string) {
 	// Send a nice user agent
 	c.UserAgent = "CoronaCount/1.0.0 (+https://github.com/tsak/coronacount)"
 
-	// Store response body for counting
-	var body []byte
-	c.OnResponse(func(response *colly.Response) {
-		if response.StatusCode == 200 {
-			body = response.Body
-		}
-	})
-
 	// Parse site title
+	content := ""
 	title := url
+
 	c.OnHTML("html", func(e *colly.HTMLElement) {
 		title = e.DOM.Find("title").First().Text()
+
+		content = e.DOM.Find("body").Text()
 	})
 
 	// Load URL
@@ -35,9 +31,11 @@ func Scrape(url string) {
 
 	// Quick and dirty
 	count := 0
-	count += bytes.Count(body, []byte("Corona"))
-	count += bytes.Count(body, []byte("corona"))
-	count += bytes.Count(body, []byte("CORONA"))
+	for _, s := range []string{"Corona", "Covid-19", "SARS-CoV-2"} {
+		count += strings.Count(content, s)                  // Count matches of Corona, ...
+		count += strings.Count(content, strings.ToUpper(s)) // Count matches of CORONA, ...
+		count += strings.Count(content, strings.ToLower(s)) // Count matches of corona, ...
+	}
 
 	siteMap.Set(url, SiteResult{
 		Name:  title,
