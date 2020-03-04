@@ -20,7 +20,7 @@ func Run() {
 	flag.BoolVar(&debugMode, "d", false, "Debug mode")
 
 	var interval int
-	flag.IntVar(&interval, "i", 30, "Scrape interval")
+	flag.IntVar(&interval, "i", 300, "Scrape interval in seconds")
 
 	var sitesTxt string
 	flag.StringVar(&sitesTxt, "s", "sites.txt", "File to load URLs from")
@@ -59,8 +59,8 @@ func Run() {
 	// Start server
 	http.HandleFunc("/", CoronaCountServer)
 	srv := &http.Server{
-		Addr: listen,
-		ReadTimeout: 5 * time.Second,
+		Addr:         listen,
+		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 	err := srv.ListenAndServe()
