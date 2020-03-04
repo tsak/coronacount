@@ -20,7 +20,7 @@ func Scrape(url string) string {
 	// Parse site title
 	title := url
 	c.OnHTML("html", func(e *colly.HTMLElement) {
-		title = e.ChildText("title")
+		title = e.DOM.Find("title").First().Text()
 	})
 
 	// Load URL
@@ -44,10 +44,9 @@ func Scrape(url string) string {
 	})
 
 	log.WithFields(log.Fields{
-		"URL": url,
+		"URL":   url,
 		"Count": count,
 	}).Info("Scraped")
 
 	return string(body)
 }
-
