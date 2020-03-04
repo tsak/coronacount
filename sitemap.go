@@ -7,10 +7,11 @@ import (
 
 // SiteResult represents a single scrape result
 type SiteResult struct {
-	Name  string
-	URL   string
-	Count int
-	Total int
+	Name     string
+	URL      string
+	Count    int
+	Previous int
+	Total    int
 }
 
 // SiteMap encapsulates a map of SiteResults with a RWMutex

@@ -94,6 +94,30 @@
             color: red;
         }
 
+        .threat-level {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            vertical-align: top;
+        }
+
+        .down {
+            color: green;
+        }
+
+        .unchanged {
+            color: orange;
+        }
+
+        .title {
+            display: inline-block;
+            width: 50%;
+            white-space: nowrap;
+            overflow: hidden;
+            vertical-align: sub;
+            text-overflow: ellipsis;
+        }
+
         .virus {
             width: 1em;
             height: 1em;
@@ -109,7 +133,14 @@
 <p>Let's panic! Counting the number of times <em>Corona</em> is being mentioned on major news sites.</p>
 <ul>
     {{range .Sites}}
-        <li><a href="{{ .URL }}">{{ .Name }} <small>{{ .Count }}</small><span class="virus"></span></a></li>
+        <li>
+            <a href="{{ .URL }}">
+                {{ if gt .Count .Previous }}<span class="threat-level up" title="Threat level going up">▲</span>{{ end }}
+                {{ if eq .Count .Previous }}<span class="threat-level unchanged" title="Threat level unchanged">●</span>{{ end }}
+                {{ if lt .Count .Previous }}<span class="threat-level down" title="Threat level going down">▼</span>{{ end }}
+                <span class="title">{{ .Name }}</span> <small>{{ .Count }}</small> <span class="virus"></span>
+            </a>
+        </li>
     {{else}}
         <li><a>Counting... <span class="virus"></span></a>
         </li>

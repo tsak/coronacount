@@ -37,12 +37,20 @@ func Scrape(url string) {
 		count += strings.Count(content, strings.ToLower(s)) // Count matches of corona, ...
 	}
 
-	siteMap.Set(url, SiteResult{
-		Name:  title,
-		URL:   url,
-		Count: count,
-		Total: 0,
-	})
+	result := SiteResult{
+		Name:     title,
+		URL:      url,
+		Count:    count,
+		Previous: count, // Set to current count to avoid comparing current with 0 value
+		Total:    0,
+	}
+
+	// Get previous result if it exists
+	if old, ok := siteMap.Get(url); ok {
+		result.Previous = old.Count
+	}
+
+	siteMap.Set(url, result)
 
 	log.WithFields(log.Fields{
 		"URL":   url,
