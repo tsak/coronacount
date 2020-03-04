@@ -10,7 +10,8 @@ func Scheduler(sites []string, interval int) {
 		log.Fatal("No sites to crawl")
 	}
 
-	updateTicker := time.NewTicker(time.Duration(interval) * time.Second)
+	// Initially scrap sites at 2 second interval to build list
+	updateTicker := time.NewTicker(2 * time.Second)
 	curr := 0
 
 	for {
@@ -19,6 +20,8 @@ func Scheduler(sites []string, interval int) {
 			go Scrape(sites[curr])
 			curr++
 			if curr >= len(sites) {
+				// Set duration to defined interval after initial scrape of all sites
+				updateTicker = time.NewTicker(time.Duration(interval) * time.Second)
 				curr = 0
 			}
 		}
