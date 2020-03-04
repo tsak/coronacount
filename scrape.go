@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Scrape(url string) string {
+func Scrape(url string) {
 	c := colly.NewCollector()
 
 	// Send a nice user agent
@@ -30,7 +30,7 @@ func Scrape(url string) string {
 	err := c.Visit(url)
 	if err != nil {
 		log.WithField("URL", url).WithError(err).Error("Unable to scrape")
-		return ""
+		return
 	}
 
 	// Quick and dirty
@@ -50,6 +50,4 @@ func Scrape(url string) string {
 		"URL":   url,
 		"Count": count,
 	}).Info("Scraped")
-
-	return string(body)
 }
