@@ -42,14 +42,6 @@ func Run() {
 
 	// Initialise empty, global site map
 	siteMap = NewSiteMap()
-	for _, url := range sites {
-		siteMap.Set(url, SiteResult{
-			Name:  url,
-			URL:   url,
-			Count: -1,
-			Total: -1,
-		})
-	}
 
 	// Start scheduler
 	go Scheduler(sites, interval)

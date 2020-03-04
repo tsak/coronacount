@@ -1,11 +1,14 @@
 package main
 
-import "sync"
+import (
+	"sort"
+	"sync"
+)
 
 // SiteResult represents a single scrape result
 type SiteResult struct {
-	Name string
-	URL string
+	Name  string
+	URL   string
 	Count int
 	Total int
 }
@@ -16,9 +19,21 @@ type SiteMap struct {
 	sites map[string]SiteResult
 }
 
+type byCount []SiteResult
+
+func (s byCount) Len() int {
+	return len(s)
+}
+func (s byCount) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s byCount) Less(i, j int) bool {
+	return s[i].Count > s[j].Count
+}
+
 func NewSiteMap() *SiteMap {
 	return &SiteMap{
-		sites:   make(map[string]SiteResult),
+		sites: make(map[string]SiteResult),
 	}
 }
 
@@ -39,4 +54,15 @@ func (m *SiteMap) Set(url string, siteResult SiteResult) {
 	m.Lock()
 	m.sites[url] = siteResult
 	m.Unlock()
+}
+
+func (m *SiteMap) All() []SiteResult {
+	m.RLock()
+	var result []SiteResult
+	for _, site := range m.sites {
+		result = append(result, site)
+	}
+	sort.Sort(byCount(result))
+	m.RUnlock()
+	return result
 }

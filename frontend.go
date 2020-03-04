@@ -19,18 +19,11 @@ func init() {
 }
 
 func CoronaCountServer(w http.ResponseWriter, r *http.Request) {
-	data := struct{
+	// TODO: Update list of sites occasionally instead of on request
+	data := struct {
 		Sites []SiteResult
 	}{
-		Sites: []SiteResult{},
-	}
-
-	for _, url := range sites {
-		log.WithField("URL", url).Debug("Collecting sites from SiteMap")
-		if site, ok := siteMap.Get(url); ok && site.Count > -1 {
-			log.WithField("SiteMap", site).Debug("Appending sites to output")
-			data.Sites = append(data.Sites, site)
-		}
+		Sites: siteMap.All(),
 	}
 
 	err := tpl.Execute(w, data)
