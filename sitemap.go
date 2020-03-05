@@ -20,24 +20,29 @@ type SiteMap struct {
 	sites map[string]SiteResult
 }
 
+// Sorting
 type byCount []SiteResult
 
-func (s byCount) Len() int {
-	return len(s)
-}
-func (s byCount) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
+func (s byCount) Len() int { return len(s) }
+
+func (s byCount) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+// Less enables sorting of SiteResult's by count (descending) and by Name if counts are the same
 func (s byCount) Less(i, j int) bool {
+	if s[i].Count == s[j].Count {
+		return s[i].Name < s[j].Name
+	}
 	return s[i].Count > s[j].Count
 }
 
+// NewSiteMap initialises a new site map and returns a pointer
 func NewSiteMap() *SiteMap {
 	return &SiteMap{
 		sites: make(map[string]SiteResult),
 	}
 }
 
+// Get returns a site map entry for a given URL (thread-safe)
 func (m *SiteMap) Get(url string) (result SiteResult, ok bool) {
 	m.RLock()
 	result, ok = m.sites[url]
@@ -45,18 +50,22 @@ func (m *SiteMap) Get(url string) (result SiteResult, ok bool) {
 	return result, ok
 }
 
+// Delete removes a site map entry for a given URL (thread-safe)
 func (m *SiteMap) Delete(url string) {
 	m.Lock()
 	delete(m.sites, url)
 	m.Unlock()
 }
 
+// Set adds or replaces a site map entry for a given URL (thread-safe)
 func (m *SiteMap) Set(url string, siteResult SiteResult) {
 	m.Lock()
 	m.sites[url] = siteResult
 	m.Unlock()
 }
 
+// UpdateCount updates a site maps entries count and stores the previous count (thread-safe)
+// Returns true/false if the entry to be updated existed or not
 func (m *SiteMap) UpdateCount(url string, count int) bool {
 	updated := false
 	m.Lock()
@@ -70,6 +79,7 @@ func (m *SiteMap) UpdateCount(url string, count int) bool {
 	return updated
 }
 
+// All returns all site map entries sorted by count in descending order (thread-safe)
 func (m *SiteMap) All() []SiteResult {
 	m.RLock()
 	var result []SiteResult
@@ -83,6 +93,7 @@ func (m *SiteMap) All() []SiteResult {
 	return result
 }
 
+// Urls returns a list of URLs from all entries of the site map
 func (m *SiteMap) Urls() (urls []string) {
 	m.RLock()
 	for url := range m.sites {
