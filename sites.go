@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"encoding/csv"
 	log "github.com/sirupsen/logrus"
+	"io"
 	"os"
 )
 
@@ -23,10 +25,40 @@ func readLines(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
-func LoadSites(path string) []string {
-	sites, err := readLines(path)
+func LoadSites(path string) *SiteMap {
+	sm := NewSiteMap()
+
+	csvfile, err := os.Open(path)
 	if err != nil {
 		log.WithField("File", path).WithError(err).Fatal("Unable to load sites")
 	}
-	return sites
+
+	r := csv.NewReader(csvfile)
+	for {
+		// Read each fields from csv
+		fields, err := r.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.WithError(err).Fatal("CSV read")
+		}
+
+		if len(fields) != 2 {
+			continue
+		}
+
+		// Generate initial sitemap from CSV
+		sm.Set(fields[1], SiteResult{
+			Name:     fields[0],
+			URL:      fields[1],
+			Count:    -1,
+			Previous: -1,
+			Total:    0,
+		})
+	}
+
+	return sm
 }

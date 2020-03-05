@@ -57,13 +57,37 @@ func (m *SiteMap) Set(url string, siteResult SiteResult) {
 	m.Unlock()
 }
 
+func (m *SiteMap) UpdateCount(url string, count int) bool {
+	updated := false
+	m.Lock()
+	if site, ok := m.sites[url]; ok {
+		updated = true
+		site.Previous = site.Count
+		site.Count = count
+		m.sites[url] = site
+	}
+	m.Unlock()
+	return updated
+}
+
 func (m *SiteMap) All() []SiteResult {
 	m.RLock()
 	var result []SiteResult
 	for _, site := range m.sites {
-		result = append(result, site)
+		if site.Count != -1 {
+			result = append(result, site)
+		}
 	}
 	sort.Sort(byCount(result))
 	m.RUnlock()
 	return result
+}
+
+func (m *SiteMap) Urls() (urls []string) {
+	m.RLock()
+	for url := range m.sites {
+		urls = append(urls, url)
+	}
+	m.RUnlock()
+	return urls
 }

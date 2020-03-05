@@ -22,8 +22,8 @@ func Run() {
 	var interval int
 	flag.IntVar(&interval, "i", 300, "Scrape interval in seconds")
 
-	var sitesTxt string
-	flag.StringVar(&sitesTxt, "s", "sites.txt", "File to load URLs from")
+	var sitesCsv string
+	flag.StringVar(&sitesCsv, "s", "sites.csv", `CSV file to load URLs from, format is "Site title", URL`)
 
 	var listen string
 	flag.StringVar(&listen, "l", "localhost:8080", "Address and port to listen and serve on")
@@ -36,12 +36,10 @@ func Run() {
 	}
 	log.ErrorKey = "Error"
 
-	// Load sites
-	sites = LoadSites(sitesTxt)
+	// Load sites from CSV
+	siteMap = LoadSites(sitesCsv)
+	sites = siteMap.Urls()
 	log.WithField("URLs", sites).Info("Sites list loaded")
-
-	// Initialise empty, global site map
-	siteMap = NewSiteMap()
 
 	// Start scheduler
 	go Scheduler(sites, interval)
