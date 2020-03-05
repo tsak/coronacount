@@ -35,6 +35,9 @@ func Scrape(url string) {
 			"URL":   url,
 			"Count": count,
 		}).Info("Scraped")
+
+		// Update frontend
+		frontend.Render(siteMap.All())
 	})
 
 	// Load URL

@@ -28,6 +28,9 @@ func Run() {
 	var listen string
 	flag.StringVar(&listen, "l", "localhost:8080", "Address and port to listen and serve on")
 
+	var tplFile string
+	flag.StringVar(&tplFile, "t", "template.html", "HTML template")
+
 	flag.Parse()
 
 	// Logging
@@ -40,6 +43,10 @@ func Run() {
 	siteMap = LoadSites(sitesCsv)
 	sites = siteMap.Urls()
 	log.WithField("URLs", sites).Info("Sites list loaded")
+
+	// Initialise template
+	frontend = NewContent(tplFile)
+	log.WithField("Template", tplFile).Info("Template initialised")
 
 	// Start scheduler
 	go Scheduler(sites, interval)

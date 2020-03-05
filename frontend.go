@@ -1,33 +1,62 @@
 package main
 
 import (
+	"bytes"
 	log "github.com/sirupsen/logrus"
 	"html/template"
 	"net/http"
+	"sync"
 )
 
 const htmlTemplate = "template.html"
 
-var tpl *template.Template
+var frontend *Content
 
-func init() {
-	var err error
-	tpl, err = template.ParseFiles(htmlTemplate)
+type Content struct {
+	sync.RWMutex
+	tpl  *template.Template
+	page []byte
+}
+
+// NewContent loads a given template file and returns a content container
+func NewContent(path string) *Content {
+	tpl, err := template.ParseFiles(path)
 	if err != nil {
-		log.WithField("Template", htmlTemplate).WithError(err).Fatal("Unable to parse template")
+		log.WithField("Template", path).WithError(err).Fatalf("Unable to process template")
+	}
+	return &Content{
+		tpl: tpl,
 	}
 }
 
-func CoronaCountServer(w http.ResponseWriter, r *http.Request) {
-	// TODO: Update list of sites occasionally instead of on request
+// Get returns the content container's page data
+func (c *Content) Get() []byte {
+	c.RLock()
+	defer c.RUnlock()
+	return c.page
+}
+
+// Render updates the content container's page data by rendering its template
+func (c *Content) Render(sr []SiteResult) {
+	c.Lock()
 	data := struct {
 		Sites []SiteResult
 	}{
-		Sites: siteMap.All(),
+		Sites: sr,
 	}
 
-	err := tpl.Execute(w, data)
+	var b bytes.Buffer
+	err := c.tpl.Execute(&b, data)
 	if err != nil {
 		log.WithError(err).Error("Template error")
+	}
+	c.page = b.Bytes()
+	c.Unlock()
+}
+
+func CoronaCountServer(w http.ResponseWriter, r *http.Request) {
+	_, err := w.Write(frontend.Get())
+	if err != nil {
+		log.WithError(err).Warn("Writing response")
 	}
 }
