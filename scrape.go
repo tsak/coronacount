@@ -19,7 +19,7 @@ func Scrape(url string) {
 	c.OnHTML("html", func(e *colly.HTMLElement) {
 		title = e.DOM.Find("title").First().Text()
 
-		content = e.DOM.Find("body").Text()
+		content = e.DOM.Find("body").Find("h1,h2,h3,h4,h5,h6,h7,p,ul,ol").Text()
 	})
 
 	// Load URL
