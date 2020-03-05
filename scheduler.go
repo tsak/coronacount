@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// Scheduler initially triggers a crawl of all given sites concurrently with a two second delay,
+// then reverts to crawling all sites after the configured interval
 func Scheduler(sites []string, interval int) {
 	if len(sites) == 0 {
 		log.Fatal("No sites to crawl")
