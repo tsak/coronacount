@@ -10,3 +10,8 @@ https://abcnews.go.com/
 https://www.bbc.co.uk/news
 https://www.usatoday.com/
 https://www.latimes.com/
+https://www.aljazeera.com/
+https://www.rt.com/news
+https://www.france24.com/en
+https://www.reddit.com/r/worldnews
+https://www.independent.co.uk/news
