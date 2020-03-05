@@ -8,10 +8,9 @@ import (
 	"sync"
 )
 
-const htmlTemplate = "template.html"
-
 var frontend *Content
 
+// Content encapsulates a RWMutex, a template and page bytes
 type Content struct {
 	sync.RWMutex
 	tpl  *template.Template
@@ -54,6 +53,7 @@ func (c *Content) Render(sr []SiteResult) {
 	c.Unlock()
 }
 
+// CoronaCountServer returns the frontend's page bytes
 func CoronaCountServer(w http.ResponseWriter, r *http.Request) {
 	_, err := w.Write(frontend.Get())
 	if err != nil {
