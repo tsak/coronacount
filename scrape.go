@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// Scrape retrieves content for a given URL, counts the number of viruses,
+// updates the site map entry and renders the frontend
 func Scrape(url string) {
 	c := colly.NewCollector()
 
