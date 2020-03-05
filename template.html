@@ -8,6 +8,7 @@
 
     <!-- Primary Meta Tags -->
     <title>Corona Count</title>
+    <meta http-equiv="refresh" content="300">
     <meta name="title" content="Corona Count">
     <meta name="description" content="Let's panic! Counting the number of times the word Corona is mentioned on major news sites.">
 
@@ -134,7 +135,7 @@
 <ul>
     {{range .Sites}}
         <li>
-            <a href="{{ .URL }}">
+            <a href="{{ .URL }}" target="_blank" rel="noopener">
                 {{ if gt .Count .Previous }}<span class="threat-level up" title="Threat level going up">▲</span>{{ end }}
                 {{ if eq .Count .Previous }}<span class="threat-level unchanged" title="Threat level unchanged">●</span>{{ end }}
                 {{ if lt .Count .Previous }}<span class="threat-level down" title="Threat level going down">▼</span>{{ end }}
@@ -147,7 +148,7 @@
     {{end}}
 </ul>
 <footer>
-    <p>Source code at <a href="https://github.com/tsak/coronacount">github.com/tsak/coronacount</a></p>
+    <p>Source code at <a href="https://github.com/tsak/coronacount" target="_blank" rel="noopener">github.com/tsak/coronacount</a></p>
 </footer>
 </body>
 </html>
