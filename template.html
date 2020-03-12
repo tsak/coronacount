@@ -138,7 +138,8 @@
 <p>Let's panic! Counting the number of times <em title="Also Covid-19, SARS-CoV-2">Corona</em> is being mentioned on major news sites.</p>
 <ul>
     {{range .Sites}}
-        <li{{ if eq .Count 0 }} class="novirus" title="Threat level uncertain"{{ end }}>
+        {{ if gt .Count 0 }}
+        <li>
             <a href="{{ .URL }}" target="_blank" rel="noopener">
                 {{ if gt .Count .Previous }}<span class="threat-level up" title="Threat level going up">▲</span>{{ end }}
                 {{ if eq .Count .Previous }}<span class="threat-level unchanged" title="Threat level unchanged">●</span>{{ end }}
@@ -146,6 +147,7 @@
                 <span class="title">{{ .Name }}</span> <small>{{ .Count }}</small> <span class="virus"></span>
             </a>
         </li>
+        {{ end }}
     {{else}}
         <li><a>Counting... <span class="virus"></span></a>
         </li>
