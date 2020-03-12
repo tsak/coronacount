@@ -38,8 +38,13 @@ func Scrape(url string) {
 			"Count": count,
 		}).Info("Scraped")
 
+		all := siteMap.All()
+
 		// Update frontend
-		frontend.Render(siteMap.All())
+		frontend.Render(all)
+
+		// Save state
+		state.Save(all)
 	})
 
 	// Load URL
