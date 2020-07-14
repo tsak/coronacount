@@ -2,7 +2,7 @@
 
 Please panic!
 
-Checking major news sites for number of mentions of the word "Corona".
+Checking major news sites for number of mentions of the phrase "Corona", "Covid-19" or "Sars-Cov-2".
 
 See for yourself at [cc.tsak.net](https://cc.tsak.net)
 
